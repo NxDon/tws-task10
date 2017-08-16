@@ -1,24 +1,31 @@
 'use strict';
 
-function find(collection, ch) {
-    for (let item of collection) {
-        if (item.key === ch) {
-            return item;
-        }
-    }
+function inResult(elem, array) {
+    return array.some((obj) => {
+        return obj.key === elem;
+    })
+}
 
-    return null;
+function addOne(elem, result) {
+    result.forEach((obj) => {
+        if (obj.key === elem) {
+            obj.count++;
+        }
+    })
+}
+
+function addNewKey(array, elem) {
+    array.push({key: elem, count: 1});
 }
 
 module.exports = function countSameElements(collection) {
     let result = [];
-    for (let item of collection) {
-        let obj = find(result, item)
-        if (obj) {
-            obj.count++;
+    collection.forEach((elem) => {
+        if (inResult(elem, result)) {
+            addOne(elem, result);
         } else {
-            result.push({key: item, count: 1});
+            addNewKey(result, elem);
         }
-    }
+    });
     return result;
-}
+};

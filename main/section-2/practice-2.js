@@ -1,53 +1,53 @@
 'use strict';
 
-function find(collection, ch) {
-    for (let item of collection) {
-        if (item.key === ch) {
-            return item;
-        }
-    }
-
-    return null;
+function inResult(elem, array) {
+    return array.some((obj) => {
+        return obj.key === elem;
+    })
 }
 
-function summarize(collection) {
+function addCount(elem, count, result) {
+    result.forEach((obj) => {
+        if (obj.key === elem) {
+            obj.count += count;
+        }
+    })
+}
+
+function addNewKey(array, count, elem) {
+    array.push({key: elem, count: count});
+}
+
+
+function normalizeElem(elem) {
+    let normalElem = elem.replace(/\[|\]|-|:/g, ",").split(",");
+    return [normalElem[0], parseInt(normalElem[1]) || 1];
+}
+
+
+//module.exports =
+function countSameElements(collection) {
     let result = [];
-    for (let item of collection) {
-        let obj = find(result, item)
-        if (obj) {
-            obj.count++;
+    collection.forEach((elem) => {
+        let [realElem, readNum] = normalizeElem(elem);
+        if (inResult(realElem, result)) {
+            addCount(realElem, readNum, result);
         } else {
-            result.push({key: item, count: 1});
+            addNewKey(result, readNum, realElem);
         }
-    }
+    });
     return result;
-}
+};
 
-function split(item) {
-    let array = item.split("-");
-    return {key: array[0], count: parseInt(array[1], 10)};
-}
-
-function push(result, key, count) {
-    for (var i = 0; i < count; i++) {
-        result.push(key);
-    }
-}
-
-function expand(collection) {
-    let result = [];
-    for (let item of collection) {
-        if (item.length === 1) {
-            result.push(item);
-        } else {
-            let {key, count} = split(item);
-            push(result, key, count);
-        }
-    }
-    return result;
-}
-
-module.exports = function countSameElements(collection) {
-    let expandedArray = expand(collection);
-    return summarize(expandedArray);
-}
+const collection = [
+    'a', 'a', 'a',
+    'e', 'e', 'e', 'e', 'e', 'e', 'e',
+    'h', 'h', 'h', 'h', 'h', 'h', 'h[3]', 'h', 'h',
+    't', 't-2', 't', 't', 't', 't', 't', 't', 't[10]',
+    'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f',
+    'c:8',
+    'g', 'g', 'g', 'g', 'g', 'g', 'g',
+    'b', 'b', 'b', 'b', 'b', 'b',
+    'd-5'
+];
+console.log(countSameElements(collection))

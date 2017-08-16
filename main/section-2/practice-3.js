@@ -1,66 +1,40 @@
 'use strict';
 
-function find(collection, ch) {
-    for (let item of collection) {
-        if (item.name === ch) {
-            return item;
+function inResult(elem, array) {
+    return array.some((obj) => {
+        return obj.name === elem;
+    })
+}
+
+function addCount(elem, count, result) {
+    result.forEach((obj) => {
+        if (obj.name === elem) {
+            obj.summary += count;
         }
-    }
-
-    return null;
+    })
 }
 
-function summarize(collection) {
-    let result = [];
-    for (let item of collection) {
-        let obj = find(result, item)
-        if (obj) {
-            obj.summary++;
-        } else {
-            result.push({name: item, summary: 1});
-        }
-    }
-    return result;
+function addNewKey(array, count, elem) {
+    array.push({name: elem, summary: count});
 }
 
-function split(item) {
-    if (item.includes("-")) {
-        let array = item.split("-");
-        return {key: array[0], count: parseInt(array[1], 10)};
-    }
 
-    if (item.includes("[")) {
-        let key = item.charAt(0);
-        let count = parseInt(item.substr(2, item.length - 1));
-        return {key, count};
-    }
-
-    if (item.includes(":")) {
-        let array = item.split(":");
-        return {key: array[0], count: parseInt(array[1], 10)};
-    }
+function normalizeElem(elem) {
+    let normalElem = elem.replace(/\[|\]|-|:/g, ",").split(",");
+    return [normalElem[0], parseInt(normalElem[1]) || 1];
 }
 
-function push(result, key, count) {
-    for (var i = 0; i < count; i++) {
-        result.push(key);
-    }
-}
 
-function expand(collection) {
-    let result = [];
-    for (let item of collection) {
-        if (item.length === 1) {
-            result.push(item);
-        } else {
-            let {key, count} = split(item);
-            push(result, key, count);
-        }
-    }
-    return result;
-}
-
-module.exports = function countSameElements(collection) {
-    let expandedArray = expand(collection);
-    return summarize(expandedArray);
-}
+module.exports =
+    function countSameElements(collection) {
+        let result = [];
+        collection.forEach((elem) => {
+            let [realElem, readNum] = normalizeElem(elem);
+            if (inResult(realElem, result)) {
+                addCount(realElem, readNum, result);
+            } else {
+                addNewKey(result, readNum, realElem);
+            }
+        });
+        return result;
+    };
