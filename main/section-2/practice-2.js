@@ -18,15 +18,12 @@ function addNewKey(array, count, elem) {
     array.push({key: elem, count: count});
 }
 
-
 function normalizeElem(elem) {
     let normalElem = elem.replace(/\[|\]|-|:/g, ",").split(",");
     return [normalElem[0], parseInt(normalElem[1]) || 1];
 }
 
-
-//module.exports =
-function countSameElements(collection) {
+module.exports = function countSameElements(collection) {
     let result = [];
     collection.forEach((elem) => {
         let [realElem, readNum] = normalizeElem(elem);
@@ -38,16 +35,3 @@ function countSameElements(collection) {
     });
     return result;
 };
-
-const collection = [
-    'a', 'a', 'a',
-    'e', 'e', 'e', 'e', 'e', 'e', 'e',
-    'h', 'h', 'h', 'h', 'h', 'h', 'h[3]', 'h', 'h',
-    't', 't-2', 't', 't', 't', 't', 't', 't', 't[10]',
-    'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f',
-    'c:8',
-    'g', 'g', 'g', 'g', 'g', 'g', 'g',
-    'b', 'b', 'b', 'b', 'b', 'b',
-    'd-5'
-];
-console.log(countSameElements(collection))

@@ -1,24 +1,24 @@
 'use strict';
 
-function includes(collection, ch) {
-    for (let item of collection) {
-        if (item === ch) {
-            return true;
-        }
-    }
+function inObject(elem, objectB) {
+    return objectB.value.some((el) => {
+        return el === elem.key;
+    })
+}
 
-    return false;
+function minusOneFromObj(elem) {
+    return {
+        key: elem.key,
+        count: elem.count - 1
+    }
 }
 
 module.exports = function createUpdatedCollection(collectionA, objectB) {
-    let result = [];
-    for (let item of collectionA) {
-        let key = item.key;
-        let count = item.count;
-        if (includes(objectB.value, key)) {
-            count--;
+    return collectionA.map((elem) => {
+        if (inObject(elem, objectB)) {
+            return minusOneFromObj(elem);
+        } else {
+            return elem;
         }
-        result.push({key, count});
-    }
-    return result;
-}
+    });
+};
